@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Super Binta Bros - Farewell Special Experience</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #5c94fc;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Canvas khusus partikel love & bunga meledak */
+        #love-particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 300;
+        }
+
+        /* HUD UI Header */
+        #ui-container {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .hud-box {
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffcc00;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+            font-size: 14px;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        #instruction {
+            position: absolute;
+            top: 65px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px #000;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* CONTROLLER CONTAINER */
+        #roblox-controls-dual {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 30;
+            pointer-events: none;
+        }
+
+        .rblx-triangle-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 14px;
+            border-radius: 35px;
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .rblx-bottom-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .rblx-arrow-btn {
+            width: 62px;
+            height: 62px;
+            background: rgba(255, 255, 255, 0.35);
+            border: 2.5px solid #fff;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.05s ease;
+        }
+
+        .rblx-arrow-btn:active {
+            background: rgba(255, 255, 255, 0.85);
+            transform: scale(0.88);
+        }
+
+        .rblx-jump-btn {
+            width: 72px;
+            height: 72px;
+            background: rgba(255, 204, 0, 0.65);
+            border: 3px solid #ffcc00;
+            border-radius: 50%;
+            color: white;
+            font-size: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.05s ease;
+        }
+
+        .rblx-jump-btn:active {
+            background: rgba(255, 204, 0, 0.95);
+            transform: scale(0.88);
+        }
+
+        /* SURPRISE BUTTON */
+        #surprise-btn {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: 3px solid #fff;
+            padding: 18px 36px;
+            font-size: 20px;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0px 10px 30px rgba(255, 71, 87, 0.6);
+            z-index: 100;
+            animation: pulse 1.2s infinite;
+            pointer-events: auto;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.08); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* OVERLAY MODAL FOR FAREWELL STORY */
+        #story-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 25, 0.95);
+            backdrop-filter: blur(16px);
+            z-index: 200;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ffffff;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        #story-title {
+            color: #fffa65;
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 0 0 12px rgba(255, 250, 101, 0.6);
+        }
+
+        #story-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 20px;
+            max-width: 580px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        /* VIDEO UTAMA DI ATAS */
+        #main-video-box {
+            width: 100%;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+
+        #main-video-box video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .story-text-p {
+            font-size: 14.5px;
+            line-height: 1.65;
+            color: #f1f2f6;
+            margin: 0;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.5s ease-out;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: pre-line;
+        }
+
+        .story-text-p.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* PESAN MARIO STYLE (INTERACTIVE) */
+        #personal-messages-container {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 5px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #fffa65;
+            margin-bottom: 4px;
+            font-weight: bold;
+            animation: bounce-text 1s infinite alternate;
+        }
+
+        @keyframes bounce-text {
+            from { transform: translateY(0); }
+            to { transform: translateY(-4px); }
+        }
+
+        .message-card-mario {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(229, 37, 33, 0.15));
+            border: 3px solid #ffcc00;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: left;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 10px rgba(255,204,0,0.2);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-card-mario:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #ffffff;
+            box-shadow: 0 12px 25px rgba(255, 204, 0, 0.6);
+        }
+
+        .message-card-mario::before {
+            content: '🪙';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .card-header-mario {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+            padding-bottom: 10px;
+        }
+
+        .avatar-box-mario {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 10px #ffcc00;
+            overflow: hidden;
+            background: #e52521;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-emoji {
+            font-size: 26px;
+        }
+
+        .sender-tag-mario {
+            font-size: 17px;
+            font-weight: 900;
+            color: #fffa65;
+            text-shadow: 1px 1px 2px #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sender-tag-mario::after {
+            content: '⭐ LEVEL CLEAR';
+            font-size: 9px;
+            background: #e52521;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid #fff;
+        }
+
+        .msg-text-full {
+            font-size: 13.5px;
+            line-height: 1.65;
+            color: #ffffff;
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        /* 3 VIDEO MENJAJAR KE BAWAH */
+        #triple-videos-stacked {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 5px;
+        }
+
+        .stacked-video-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stacked-video-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fffa65;
+            margin-bottom: 8px;
+        }
+
+        .stacked-video-card video {
+            width: 100%;
+            height: 190px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #000;
+            outline: none;
+        }
+
+        /* CONTAINER PUZZLE OTOMATIS */
+        #puzzle-container-wrapper {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .puzzle-title-header {
+            font-size: 16px;
+            font-weight: 900;
+            color: #fffa65;
+            text-shadow: 0 0 10px rgba(255, 250, 101, 0.6);
+            letter-spacing: 0.5px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        #puzzle-grid {
+            position: relative;
+            width: 240px;
+            height: 320px;
+            background: #111;
+            border: 3px solid #ffcc00;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .puzzle-piece {
+            position: absolute;
+            background-image: url('ratu kacang panjang.jpg');
+            background-size: 240px 320px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            /* Durasi animasi diperlambat menjadi 3.5 detik dengan efek smooth ease-in-out */
+            transition: all 3.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ACTION BUTTONS */
+        #story-next-btn {
+            margin-top: 18px;
+            background: #2ed573;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(46, 213, 115, 0.4);
+            transition: all 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #story-next-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* FINALE LOVE & BUNGA BUTTON */
+        #love-btn-container {
+            display: none;
+            margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .love-trigger-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            border: 2.5px solid #fff;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 35px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.8);
+            animation: heart-beat 1.2s infinite;
+        }
+
+        @keyframes heart-beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .love-trigger-btn:active {
+            transform: scale(0.88) !important;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <canvas id="love-particle-canvas"></canvas>
+
+    <div id="ui-container">
+        <div class="hud-box">🏁 ROBLOX BINTA BROS</div>
+        <div class="hud-box" id="score-box">🧺 ANGKUT: 0 / 8 KAK BINTA</div>
+    </div>
+
+    <div id="instruction">📐 LAYOUT SEGITIGA: Jump di Tengah Atas! Ada di Kiri & Kanan!</div>
+
+    <!-- DUAL CONTROLLERS -->
+    <div id="roblox-controls-dual">
+        <div class="rblx-triangle-unit">
+            <div class="rblx-jump-btn btn-jump-action">🦘</div>
+            <div class="rblx-bottom-row">
+                <div class="rblx-arrow-btn btn-left-action">◄</div>
+                <div class="rblx-arrow-btn btn-right-action">►</div>
+            </div>
+        </div>
+
+        <div class="rblx-triangle-unit">
+            <div class="rblx-jump-btn btn-jump-action">🦘</div>
+            <div class="rblx-bottom-row">
+                <div class="rblx-arrow-btn btn-left-action">◄</div>
+                <div class="rblx-arrow-btn btn-right-action">►</div>
+            </div>
+        </div>
+    </div>
+
+    <button id="surprise-btn" onclick="triggerSurprise()">🎁 CLICK FOR THE SURPRISE! 🎁</button>
+
+    <!-- FAREWELL STORY OVERLAY MODAL -->
+    <div id="story-overlay">
+        <div id="story-title">✨ Terima Kasih, Kak Binta! ✨</div>
+        <div id="story-card">
+            
+            <!-- VIDEO UTAMA DI ATAS -->
+            <div id="main-video-box">
+                <video id="main-video-player" controls autoplay loop muted playsinline preload="auto">
+                    <source src="video utama.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <!-- PARAGRAF SURAT UTAMA -->
+            <p id="story-text" class="story-text-p"></p>
+
+            <!-- CARDS PESAN FULL AMALIA, DANIEL, DEVIRA -->
+            <div id="personal-messages-container">
+                <div class="hint-text">✨ Sentuh Card Untuk Mendengarkan Suara Koin Mario! ✨</div>
+                
+                <div class="message-card-mario" onclick="playCollectSound()">
+                    <div class="card-header-mario">
+                        <div class="avatar-box-mario">
+                            <img src="AMALIA.jpeg" class="avatar-img" alt="Amalia" onerror="this.outerHTML='<span class=\'avatar-emoji\'>🌸</span>'">
+                        </div>
+                        <div class="sender-tag-mario">Amalia</div>
+                    </div>
+                    <p class="msg-text-full">Hallow kak binss... terima kasih sudah menjadi kak binta yg kami kenal, kak binta tetaplah kak binta, tidak akan ada yg bisa menggantikan sosok kak bins di hidup kami. Sukses terus buat kak bins, teruslah bersinar dan membawa keceriaan utk orang sekitar.
+
+We love uu kak binss, see u when I see u🫰🏻</p>
+                </div>
+
+                <div class="message-card-mario" onclick="playCollectSound()">
+                    <div class="card-header-mario">
+                        <div class="avatar-box-mario">
+                            <img src="daniel.jpeg" class="avatar-img" alt="Daniel" onerror="this.outerHTML='<span class=\'avatar-emoji\'>👦🏻</span>'">
+                        </div>
+                        <div class="sender-tag-mario">Daniel</div>
+                    </div>
+                    <p class="msg-text-full">Makasih banyak ya kak udah seperti kakak kami di perpus. Maaf kalau ada kelakuan ku yang kurang sopan. Buat kak binta semoga kakak sehat terus, panjang umur, dan banyak rezeki aminnn.
+
+Jangan lupa lanjutin perjuangan kopdes kita kak mwehehe</p>
+                </div>
+
+                <div class="message-card-mario" onclick="playCollectSound()">
+                    <div class="card-header-mario">
+                        <div class="avatar-box-mario">
+                            <img src="devira.jpeg" class="avatar-img" alt="Devira" onerror="this.outerHTML='<span class=\'avatar-emoji\'>👧🏻</span>'">
+                        </div>
+                        <div class="sender-tag-mario">Devira</div>
+                    </div>
+                    <p class="msg-text-full">Hi Kak Binta!!
+
+Would like to say biggest thank u ke kakak. Since day 1 kakak tuh selalu welcome banget ke aku di space ini. Terimakasih banyak atas segala ruang dan perhatian yang udah kakak kasih ke aku. I really appreciate it anddd menerima itu semua dengan senang hati.
+
+Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. Maaf atas segala kurangnyaa diriku ini dalam perjalanan ini ya kakk. I'll keep growing in everyday. Thank u for everything kakk. You very taught me a lot kakk, and i hopes our paths can cross again yah! ✨</p>
+                </div>
+
+            </div>
+
+            <!-- 3 VIDEO MENJAJAR KE BAWAH -->
+            <div id="triple-videos-stacked">
+                <div class="stacked-video-card">
+                    <div class="stacked-video-title">🎥 Video Vlog</div>
+                    <video controls controlslist="nodownload" preload="metadata">
+                        <source src="vlog.mp4" type="video/mp4">
+                        Browser kamu tidak mendukung video ini.
+                    </video>
+                </div>
+
+                <div class="stacked-video-card">
+                    <div class="stacked-video-title">🎬 Behind The Scenes</div>
+                    <video controls controlslist="nodownload" preload="metadata">
+                        <source src="behindthescene.mp4" type="video/mp4">
+                        Browser kamu tidak mendukung video ini.
+                    </video>
+                </div>
+
+                <div class="stacked-video-card">
+                    <div class="stacked-video-title">💌 Our Wishes To Kak Binta</div>
+                    <video controls controlslist="nodownload" preload="metadata">
+                        <source src="ourwishes.mp4" type="video/mp4">
+                        Browser kamu tidak mendukung video ini.
+                    </video>
+                </div>
+            </div>
+
+            <!-- SLIDE BARU: PUZZLE OTOMATIS DENGAN NAMA LENGKAP -->
+            <div id="puzzle-container-wrapper">
+                <div class="puzzle-title-header">
+                    👑 SANG RATU KACANG PANJANG 👑<br>
+                    <span style="font-size: 13px; color: #fff; font-weight: normal;">BINTA SYALSA NAZRIFA</span>
+                </div>
+                <div id="puzzle-grid"></div>
+            </div>
+
+            <!-- FINALE LOVE & BUNGA BUTTON -->
+            <div id="love-btn-container">
+                <button class="love-trigger-btn" onclick="sendLoveAndFlowerExplosion()">💖 Kirim Pelukan, Love & Bunga! 💐</button>
+            </div>
+
+        </div>
+        <button id="story-next-btn" onclick="nextParagraph()">NEXT ➔</button>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="mario-bgm" loop preload="auto">
+        <source src="Super_Mario_Bros._-_Theme_Song.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="surprise-song" preload="auto">
+        <source src="laguk.mpeg" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Web Audio Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playJumpSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playCollectSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // Explosion Particles
+        const canvas = document.getElementById('love-particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let explosionParticles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ExplosionParticle {
+            constructor(x, y) {
+                const items = ['💖', '💕', '💗', '💓', '❤️', '🌹', '💐', '🌸', '🌺', '✨', '🌼', '⭐', '🪙'];
+                this.emoji = items[Math.floor(Math.random() * items.length)];
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 32 + 20;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 20 + 8;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed - Math.random() * 6;
+                
+                this.gravity = 0.25;
+                this.opacity = 1;
+                this.fadeSpeed = Math.random() * 0.012 + 0.008;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.opacity -= this.fadeSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.font = `${this.size}px sans-serif`;
+                ctx.fillText(this.emoji, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        function renderExplosion() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = explosionParticles.length - 1; i >= 0; i--) {
+                explosionParticles[i].update();
+                explosionParticles[i].draw();
+                if (explosionParticles[i].opacity <= 0) {
+                    explosionParticles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(renderExplosion);
+        }
+        renderExplosion();
+
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x5c94fc);
+        scene.fog = new THREE.Fog(0x5c94fc, 10, 120);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 4.8, 9.5);
+        camera.lookAt(0, 1.2, -5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        // Track
+        const lanes = [-3.5, 0, 3.5];
+        const trackGeo = new THREE.PlaneGeometry(12, 350);
+        const trackMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+        const track = new THREE.Mesh(trackGeo, trackMat);
+        track.rotation.x = -Math.PI / 2;
+        track.position.z = -140;
+        scene.add(track);
+
+        lanes.forEach(x => {
+            const laneLineGeo = new THREE.PlaneGeometry(0.15, 350);
+            const laneLineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.35, transparent: true });
+            const laneLine = new THREE.Mesh(laneLineGeo, laneLineMat);
+            laneLine.rotation.x = -Math.PI / 2;
+            laneLine.position.set(x, 0.01, -140);
+            scene.add(laneLine);
+        });
+
+        // Player
+        let bintaTextureGlobal = null;
+        let bintaAspect = 1.0;
+
+        function loadCutoutTexture(imagePath, callback) {
+            const img = new Image();
+            img.src = imagePath;
+            img.onload = () => {
+                bintaAspect = img.naturalWidth / img.naturalHeight;
+                const canvasBox = document.createElement('canvas');
+                canvasBox.width = img.naturalWidth;
+                canvasBox.height = img.naturalHeight;
+                const ctxBox = canvasBox.getContext('2d');
+                ctxBox.drawImage(img, 0, 0);
+
+                const imgData = ctxBox.getImageData(0, 0, canvasBox.width, canvasBox.height);
+                const data = imgData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i] > 210 && data[i + 1] > 210 && data[i + 2] > 210) {
+                        data[i + 3] = 0;
+                    }
+                }
+
+                ctxBox.putImageData(imgData, 0, 0);
+                callback(new THREE.CanvasTexture(canvasBox));
+            };
+            img.onerror = () => {
+                callback(new THREE.TextureLoader().load(imagePath));
+            };
+        }
+
+        const playerGroup = new THREE.Group();
+        const kartBody = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.8, 3.2), new THREE.MeshStandardMaterial({ color: 0xe52521 }));
+        kartBody.position.y = 0.6;
+        playerGroup.add(kartBody);
+
+        const tub = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.6, 1.4), new THREE.MeshStandardMaterial({ color: 0xffd700 }));
+        tub.position.set(0, 1.0, 0.6);
+        playerGroup.add(tub);
+
+        const wheelGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 16);
+        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+        [[-1.2, 0.4, 1], [1.2, 0.4, 1], [-1.2, 0.4, -1], [1.2, 0.4, -1]].forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(...pos);
+            playerGroup.add(wheel);
+        });
+
+        playerGroup.position.set(0, 0, 0);
+        scene.add(playerGroup);
+
+        // Elements
+        const bintaCoins = [];
+        const obstacles = [];
+        let score = 0;
+        const targetScore = 8;
+
+        loadCutoutTexture('kak binta mario.png', (texture) => {
+            bintaTextureGlobal = texture;
+            spawnGameElements();
+        });
+
+        function spawnGameElements() {
+            for (let i = 0; i < 12; i++) {
+                const coin = new THREE.Sprite(new THREE.SpriteMaterial({ map: bintaTextureGlobal }));
+                coin.scale.set(2.2 * bintaAspect, 2.2, 1);
+                coin.position.set(lanes[Math.floor(Math.random() * lanes.length)], 1.5, -30 - (i * 16));
+                scene.add(coin);
+                bintaCoins.push(coin);
+            }
+
+            const pipeGeo = new THREE.CylinderGeometry(0.95, 0.95, 1.9, 16);
+            const pipeMat = new THREE.MeshStandardMaterial({ color: 0x2ed573, roughness: 0.3 });
+
+            for (let j = 0; j < 9; j++) {
+                const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+                pipe.position.set(lanes[Math.floor(Math.random() * lanes.length)], 0.95, -40 - (j * 18));
+                scene.add(pipe);
+                obstacles.push(pipe);
+            }
+        }
+
+        // End goal
+        const endGoalGroup = new THREE.Group();
+        endGoalGroup.position.set(0, 0, -250);
+
+        const bertigaMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 7.5),
+            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('kita bertiga.jpeg'), side: THREE.DoubleSide })
+        );
+        bertigaMesh.position.set(0, 5, 0);
+        endGoalGroup.add(bertigaMesh);
+
+        const frameMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(10.5, 8, 0.2),
+            new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 })
+        );
+        frameMesh.position.set(0, 5, -0.2);
+        endGoalGroup.add(frameMesh);
+
+        const lightRay = new THREE.Mesh(
+            new THREE.ConeGeometry(12, 40, 32, 1, true),
+            new THREE.MeshBasicMaterial({ color: 0xfffa75, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
+        );
+        lightRay.position.set(0, 18, 0);
+        lightRay.rotation.x = Math.PI;
+        endGoalGroup.add(lightRay);
+
+        scene.add(endGoalGroup);
+
+        // Control logic
+        let currentLaneIndex = 1;
+        let targetX = lanes[currentLaneIndex];
+        let speed = 0.58; 
+        let isFinished = false;
+
+        let isJumping = false;
+        let jumpVelocity = 0;
+        const gravity = -0.022;
+
+        function moveLeft() {
+            if (isFinished) return;
+            playBGM();
+            if (currentLaneIndex > 0) currentLaneIndex--;
+            targetX = lanes[currentLaneIndex];
+        }
+
+        function moveRight() {
+            if (isFinished) return;
+            playBGM();
+            if (currentLaneIndex < 2) currentLaneIndex++;
+            targetX = lanes[currentLaneIndex];
+        }
+
+        function performJump() {
+            if (isFinished) return;
+            playBGM();
+            playJumpSound();
+            if (!isJumping) {
+                isJumping = true;
+                jumpVelocity = 0.42;
+            }
+        }
+
+        function playBGM() {
+            const bgm = document.getElementById('mario-bgm');
+            if (bgm && bgm.paused && !isFinished) bgm.play().catch(() => {});
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') performJump();
+        });
+
+        document.querySelectorAll('.btn-left-action').forEach(el => { el.addEventListener('click', moveLeft); });
+        document.querySelectorAll('.btn-right-action').forEach(el => { el.addEventListener('click', moveRight); });
+        document.querySelectorAll('.btn-jump-action').forEach(el => { el.addEventListener('click', performJump); });
+
+        // Loop Game
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (!isFinished) {
+                playerGroup.position.x += (targetX - playerGroup.position.x) * 0.25;
+
+                if (isJumping) {
+                    playerGroup.position.y += jumpVelocity;
+                    jumpVelocity += gravity;
+                    playerGroup.rotation.x = -jumpVelocity * 0.4;
+
+                    if (playerGroup.position.y <= 0) {
+                        playerGroup.position.y = 0;
+                        isJumping = false;
+                        jumpVelocity = 0;
+                        playerGroup.rotation.x = 0;
+                    }
+                }
+
+                bintaCoins.forEach((coin) => {
+                    coin.position.z += speed;
+                    coin.position.y = 1.5 + Math.sin(Date.now() * 0.006 + coin.position.z) * 0.15;
+
+                    if (playerGroup.position.distanceTo(coin.position) < 2.2 && coin.visible) {
+                        coin.visible = false;
+                        score++;
+                        playCollectSound();
+                        document.getElementById('score-box').innerText = `🧺 ANGKUT: ${score} / ${targetScore} KAK BINTA`;
+
+                        if (bintaTextureGlobal) {
+                            const miniSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: bintaTextureGlobal }));
+                            miniSprite.scale.set(0.8 * bintaAspect, 0.8, 1);
+                            miniSprite.position.set((Math.random() - 0.5) * 1.0, 1.2 + (score * 0.16), 0.6);
+                            playerGroup.add(miniSprite);
+                        }
+
+                        if (score >= targetScore) {
+                            document.getElementById('instruction').innerText = "✨ LUAR BIASA! SEKARANG MELAJU KE CAHAYA SURGA... ✨";
+                            speed = 0.95;
+                        }
+                    }
+
+                    if (coin.position.z > 10) {
+                        coin.position.z = -180;
+                        coin.visible = true;
+                    }
+                });
+
+                obstacles.forEach((pipe) => {
+                    pipe.position.z += speed;
+                    const isAbovePipe = playerGroup.position.y > 1.25;
+
+                    if (playerGroup.position.distanceTo(pipe.position) < 1.85 && !isAbovePipe) {
+                        pipe.position.z += 8;
+                        if (score > 0) score--;
+                        document.getElementById('score-box').innerText = `🧺 ANGKUT: ${score} / ${targetScore} KAK BINTA`;
+                        document.body.style.backgroundColor = "#ff4757";
+                        setTimeout(() => { document.body.style.backgroundColor = "#5c94fc"; }, 150);
+                    }
+
+                    if (pipe.position.z > 10) {
+                        pipe.position.z = -160;
+                    }
+                });
+
+                if (score >= targetScore) {
+                    endGoalGroup.position.z += speed;
+
+                    if (endGoalGroup.position.z >= -3) {
+                        speed = 0;
+                        isFinished = true;
+                        document.getElementById('surprise-btn').style.display = 'block';
+                        document.getElementById('instruction').style.display = 'none';
+                        document.getElementById('roblox-controls-dual').style.display = 'none';
+                    }
+                }
+            }
+
+            lightRay.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        // Story paragraphs
+        const paragraphs = [
+            "cang kacang panjang #eaaa\n\nGak kerasa ya kak masa magang kami di BI udah selesai aja (alay aja sih inii)). sebelum kami bener-bener pamit, We'd like to say biggest thank u ke Kak Binta. Ini bukan kata kata alay sih magang ya, tapi beneran kita ngetiknya pake hati dan perasaan (muka yang tersedu sedu #hiksrott).",
+            "JUJUR AJEH, dari semua orang yang kami temui, Kak Binta tuh salah satu yang bikin hari-hari magang kami terasa lebih ringan n lupa akan kerjaan (karena MAEENNN TEROSSS). Makasih udah sabar ngadepin kami yang kadang nyeleneh, kek orang linglung ini terus mau dengerin pertanyaan-pertanyaan aneh ini",
+            "Kami belajar banyak sih kak dari kakak (belajar jadi manager kopdes, cara racing dengan baik, mendaki gunung roblox dengan baik #CANDAA). Bukan cuma soal kerjaan, tapi juga cara kakak bangun suasana dan keep it humble itu sarangbeo banget sih kakk. \n\nThat's a lesson yang gak akan kami lupain.",
+            "So, ini bukan perpisahan yang sedih ya kakk, anggap aja sampai jumpa lagi. Terima kasih banyak untuk semua bimbingan, kebaikan, dan cerita serunya selama ini. Sehat terus, bahagia terus, semoga perpus selalu ramai kalo bisa nembus 1 juta pengunjung dalam 1 bulan wkwkkw (biar kakak gakk ovt lagi). and hopefully our paths can cross again yah kakk!\n\nNANTII KITA MAIN KE PERPUS LAGI (#PRENKKK)"
+        ];
+
+        let currentStep = 0;
+
+        // EFEK SURPRISE / CONFETTI MELEDAK PAS KLIK BUTTON SURPRISE
+        function triggerSurprise() {
+            document.getElementById('surprise-btn').style.display = 'none';
+            document.getElementById('ui-container').style.display = 'none';
+
+            playCollectSound();
+            sendLoveAndFlowerExplosion();
+
+            const bgm = document.getElementById('mario-bgm');
+            if (bgm) bgm.pause();
+            
+            const surpriseSong = document.getElementById('surprise-song');
+            if (surpriseSong) surpriseSong.play().catch(() => {});
+
+            setTimeout(() => {
+                document.getElementById('story-overlay').style.display = 'flex';
+                showParagraph(0);
+            }, 500);
+        }
+
+        function showParagraph(index) {
+            const pElem = document.getElementById('story-text');
+            const nextBtn = document.getElementById('story-next-btn');
+
+            pElem.classList.remove('show');
+            nextBtn.classList.remove('active');
+
+            setTimeout(() => {
+                pElem.innerText = paragraphs[index];
+                pElem.classList.add('show');
+
+                setTimeout(() => {
+                    nextBtn.innerText = "NEXT ➔";
+                    nextBtn.classList.add('active');
+                }, 400);
+            }, 250);
+        }
+
+        // FUNGSI INISIALISASI & MENYUSUN PUZZLE OTOMATIS (DIPERLAMBAT)
+        function initAutoPuzzle() {
+            const grid = document.getElementById('puzzle-grid');
+            grid.innerHTML = '';
+            
+            const rows = 4;
+            const cols = 3;
+            const pieceWidth = 240 / cols;
+            const pieceHeight = 320 / rows;
+            const pieces = [];
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.style.width = `${pieceWidth}px`;
+                    piece.style.height = `${pieceHeight}px`;
+                    piece.style.backgroundImage = "url('ratu kacang panjang.jpg')";
+                    piece.style.backgroundSize = "240px 320px";
+                    piece.style.backgroundPosition = `-${c * pieceWidth}px -${r * pieceHeight}px`;
+
+                    // Posisi Akhir yang Sempurna
+                    const correctX = c * pieceWidth;
+                    const correctY = r * pieceHeight;
+
+                    // Posisi Acak Awal (Tergeser Lebih Jauh)
+                    const randomX = correctX + (Math.random() - 0.5) * 600;
+                    const randomY = correctY + (Math.random() - 0.5) * 600;
+
+                    piece.style.left = `${randomX}px`;
+                    piece.style.top = `${randomY}px`;
+
+                    grid.appendChild(piece);
+                    pieces.push({ element: piece, correctX, correctY });
+                }
+            }
+
+            // Jeda sebelum merakit diri
+            setTimeout(() => {
+                playCollectSound();
+                pieces.forEach(p => {
+                    p.element.style.left = `${p.correctX}px`;
+                    p.element.style.top = `${p.correctY}px`;
+                });
+            }, 400);
+        }
+
+        function nextParagraph() {
+            playJumpSound();
+            currentStep++;
+            const pElem = document.getElementById('story-text');
+            const nextBtn = document.getElementById('story-next-btn');
+
+            if (currentStep < paragraphs.length) {
+                showParagraph(currentStep);
+            } else if (currentStep === paragraphs.length) {
+                pElem.style.display = 'none';
+                document.getElementById('story-title').innerText = "💌 Special Messages For Kak Binta 💌";
+                document.getElementById('personal-messages-container').style.display = 'flex';
+
+                nextBtn.classList.remove('active');
+                setTimeout(() => {
+                    nextBtn.innerText = "Lihat 3 Video Kenangan ➔";
+                    nextBtn.classList.add('active');
+                }, 600);
+            } else if (currentStep === paragraphs.length + 1) {
+                document.getElementById('personal-messages-container').style.display = 'none';
+                document.getElementById('story-title').innerText = "🎬 Special Videos For Kak Binta 🎬";
+                document.getElementById('triple-videos-stacked').style.display = 'flex';
+
+                nextBtn.classList.remove('active');
+                setTimeout(() => {
+                    nextBtn.innerText = "Buka Kejutan Ratu Kacang Panjang ➔";
+                    nextBtn.classList.add('active');
+                }, 600);
+            } else if (currentStep === paragraphs.length + 2) {
+                // SLIDE PUZZLE OTOMATIS MUNCUL DI SINI (SEBELUM SLIDE TERAKHIR)
+                document.getElementById('triple-videos-stacked').style.display = 'none';
+                document.getElementById('main-video-box').style.display = 'none';
+                document.getElementById('story-title').innerText = "👑 Sang Ratu Kacang Panjang 👑";
+                document.getElementById('puzzle-container-wrapper').style.display = 'flex';
+
+                initAutoPuzzle();
+
+                nextBtn.classList.remove('active');
+                // Tombol next dikunci selama 4.2 detik agar animasi puzzle selesai terakit dengan santai
+                setTimeout(() => {
+                    nextBtn.innerText = "Lanjut ➔";
+                    nextBtn.classList.add('active');
+                }, 4200); 
+            } else {
+                // SLIDE TERAKHIR (FINALE)
+                document.getElementById('puzzle-container-wrapper').style.display = 'none';
+                document.getElementById('story-title').innerText = "❤️ WE WILL MISS YOU KAK BINTA! ❤️";
+                
+                pElem.style.display = 'block';
+                pElem.innerHTML = `<b style="color:#fffa65; font-size:16px; text-align:center;">
+                    Terima kasih telah mewarnai masa magang kami di Bank Indonesia! ✨<br><br>
+                    Sukses, Sehat, dan Bahagia Selalu Untuk Kak Binta! 💖#SALAMMBOOYAHH
+                     NANTI KITA LANJUTKAN KOPDES KITA N NGEROBLOX LAGI YAHHH
+                </b>`;
+                pElem.classList.add('show');
+
+                document.getElementById('love-btn-container').style.display = 'flex';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        function sendLoveAndFlowerExplosion() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (let i = 0; i < 160; i++) {
+                explosionParticles.push(new ExplosionParticle(centerX, centerY));
+            }
+
+            confetti({
+                particleCount: 180,
+                spread: 130,
+                startVelocity: 55,
+                origin: { y: 0.5 }
+            });
+
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    angle: 60,
+                    spread: 90,
+                    origin: { x: 0, y: 0.6 }
+                });
+                confetti({
+                    particleCount: 100,
+                    angle: 120,
+                    spread: 90,
+                    origin: { x: 1, y: 0.6 }
+                });
+            }, 300);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
