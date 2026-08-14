@@ -67,66 +67,78 @@
             pointer-events: none;
         }
 
-        /* SINGLE CENTRAL CONTROLLER */
-        #roblox-controls-single {
+        /* KONTROLER DI KIRI & KANAN MEMBENTUK SEGITIGA (KECIL) */
+        #controls-left {
             position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            bottom: 20px;
+            left: 20px;
+            width: 110px;
+            height: 100px;
             z-index: 30;
             pointer-events: auto;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 16px 28px;
-            border-radius: 50px;
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #controls-right {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 110px;
+            height: 100px;
+            z-index: 30;
+            pointer-events: auto;
         }
 
         .rblx-arrow-btn {
-            width: 72px;
-            height: 72px;
+            position: absolute;
+            width: 44px;
+            height: 44px;
             background: rgba(255, 255, 255, 0.35);
-            border: 3px solid #fff;
+            border: 2px solid #fff;
             border-radius: 50%;
             color: white;
-            font-size: 28px;
+            font-size: 18px;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
             transition: transform 0.05s ease;
         }
 
-        .rblx-arrow-btn:active {
-            background: rgba(255, 255, 255, 0.85);
-            transform: scale(0.88);
-        }
-
         .rblx-jump-btn {
-            width: 82px;
-            height: 82px;
-            background: rgba(255, 204, 0, 0.75);
-            border: 3.5px solid #ffcc00;
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 204, 0, 0.85);
+            border: 2.5px solid #ffcc00;
             border-radius: 50%;
             color: white;
-            font-size: 32px;
+            font-size: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.4);
             cursor: pointer;
             transition: transform 0.05s ease;
         }
 
-        .rblx-jump-btn:active {
-            background: rgba(255, 204, 0, 0.95);
-            transform: scale(0.88);
+        /* Posisi Segitiga Kontroler Kiri (Kiri di bawah-kiri, Kanan di bawah-kanan, Lompat di atas-tengah) */
+        #controls-left .btn-left-action { bottom: 0; left: 0; }
+        #controls-left .btn-right-action { bottom: 0; right: 0; }
+        #controls-left .btn-jump-action { top: 0; left: 29px; }
+
+        /* Posisi Segitiga Kontroler Kanan (Kiri di bawah-kiri, Kanan di bawah-kanan, Lompat di atas-tengah) */
+        #controls-right .btn-left-action { bottom: 0; left: 0; }
+        #controls-right .btn-right-action { bottom: 0; right: 0; }
+        #controls-right .btn-jump-action { top: 0; left: 29px; }
+
+        .rblx-arrow-btn:active, .rblx-jump-btn:active {
+            transform: scale(0.85);
+            background: rgba(255, 255, 255, 0.85);
+        }
+        #controls-right .rblx-jump-btn:active {
+            background: rgba(255, 204, 0, 1);
         }
 
         /* SURPRISE BUTTON */
@@ -491,13 +503,18 @@
         <div class="hud-box" id="score-box">🧺 ANGKUT: 0 / 8 KAK BINTA</div>
     </div>
 
-    <div id="instruction">📐 KONTROLER DI TENGAH: Kiri, Jump, Kanan!</div>
+    <div id="instruction">📐 KONTROLER KIRI & KANAN: Susunan Segitiga (Geser & Lompat)</div>
 
-    <!-- SINGLE CENTRAL CONTROLLER -->
-    <div id="roblox-controls-single">
+    <!-- KONTROLER SEGITIGA DI KIRI & KANAN -->
+    <div id="controls-left">
         <div class="rblx-arrow-btn btn-left-action">◄</div>
-        <div class="rblx-jump-btn btn-jump-action">🦘</div>
         <div class="rblx-arrow-btn btn-right-action">►</div>
+        <div class="rblx-jump-btn btn-jump-action">🦘</div>
+    </div>
+    <div id="controls-right">
+        <div class="rblx-arrow-btn btn-left-action">◄</div>
+        <div class="rblx-arrow-btn btn-right-action">►</div>
+        <div class="rblx-jump-btn btn-jump-action">🦘</div>
     </div>
 
     <button id="surprise-btn" onclick="triggerSurprise()">🎁 CLICK FOR THE SURPRISE! 🎁</button>
@@ -981,7 +998,8 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
                         isFinished = true;
                         document.getElementById('surprise-btn').style.display = 'block';
                         document.getElementById('instruction').style.display = 'none';
-                        document.getElementById('roblox-controls-single').style.display = 'none';
+                        document.getElementById('controls-left').style.display = 'none';
+                        document.getElementById('controls-right').style.display = 'none';
                     }
                 }
             }
@@ -1000,7 +1018,6 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
 
         let currentStep = 0;
 
-        // EFEK SURPRISE / CONFETTI MELEDAK PAS KLIK BUTTON SURPRISE
         function triggerSurprise() {
             document.getElementById('surprise-btn').style.display = 'none';
             document.getElementById('ui-container').style.display = 'none';
@@ -1038,7 +1055,6 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
             }, 250);
         }
 
-        // FUNGSI INISIALISASI & MENYUSUN PUZZLE OTOMATIS (DIPERLAMBAT)
         function initAutoPuzzle() {
             const grid = document.getElementById('puzzle-grid');
             grid.innerHTML = '';
@@ -1125,13 +1141,12 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
                 }, 4200); 
             } else {
                 document.getElementById('puzzle-container-wrapper').style.display = 'none';
-                document.getElementById('story-title').innerText = "❤️ WE WILL MISS YOU KAK BINTA! ❤️";
+                document.getElementById('story-title').style.display = 'none';
                 
                 pElem.style.display = 'block';
                 pElem.innerHTML = `<b style="color:#fffa65; font-size:16px; text-align:center;">
                     Terima kasih telah mewarnai masa magang kami di Bank Indonesia! ✨<br><br>
-                    Sukses, Sehat, dan Bahagia Selalu Untuk Kak Binta! 💖#SALAMMBOOYAHH
-                     NANTI KITA LANJUTKAN KOPDES KITA N NGEROBLOX LAGI YAHHH
+                    Sukses, Sehat, dan Bahagia Selalu Untuk Kak Binta! 💖
                 </b>`;
                 pElem.classList.add('show');
 
