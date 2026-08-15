@@ -67,78 +67,76 @@
             pointer-events: none;
         }
 
-        /* KONTROLER DI KIRI & KANAN MEMBENTUK SEGITIGA (KECIL) */
-        #controls-left {
+        /* =======================================================
+           LAYOUT KONTROLER GAYA ROBLOX (JOYSTICK ANALOG KIRI)
+           ======================================================= */
+        #controls-joystick-area {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 110px;
-            height: 100px;
+            bottom: 25px;
+            left: 25px;
+            width: 170px;
+            height: 170px;
+            z-index: 30;
+            pointer-events: auto;
+            touch-action: none;
+        }
+
+        .roblox-joystick-base {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 50, 150, 0.25);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        .roblox-joystick-thumb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 75px;
+            height: 75px;
+            transform: translate(-50%, -50%);
+            background: rgba(210, 230, 255, 0.75);
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        #controls-action {
+            position: absolute;
+            bottom: 35px;
+            right: 35px;
+            width: 85px;
+            height: 85px;
             z-index: 30;
             pointer-events: auto;
         }
 
-        #controls-right {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 110px;
-            height: 100px;
-            z-index: 30;
-            pointer-events: auto;
-        }
-
-        .rblx-arrow-btn {
-            position: absolute;
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.35);
-            border: 2px solid #fff;
+        .roblox-jump-btn {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            border: 2.5px solid rgba(255, 255, 255, 0.6);
             border-radius: 50%;
             color: white;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 34px;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             cursor: pointer;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            transition: transform 0.05s ease;
+            backdrop-filter: blur(4px);
+            transition: transform 0.05s ease, background 0.05s ease;
         }
 
-        .rblx-jump-btn {
-            position: absolute;
-            width: 52px;
-            height: 52px;
-            background: rgba(255, 204, 0, 0.85);
-            border: 2.5px solid #ffcc00;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-            cursor: pointer;
-            transition: transform 0.05s ease;
-        }
-
-        /* Posisi Segitiga Kontroler Kiri (Kiri di bawah-kiri, Kanan di bawah-kanan, Lompat di atas-tengah) */
-        #controls-left .btn-left-action { bottom: 0; left: 0; }
-        #controls-left .btn-right-action { bottom: 0; right: 0; }
-        #controls-left .btn-jump-action { top: 0; left: 29px; }
-
-        /* Posisi Segitiga Kontroler Kanan (Kiri di bawah-kiri, Kanan di bawah-kanan, Lompat di atas-tengah) */
-        #controls-right .btn-left-action { bottom: 0; left: 0; }
-        #controls-right .btn-right-action { bottom: 0; right: 0; }
-        #controls-right .btn-jump-action { top: 0; left: 29px; }
-
-        .rblx-arrow-btn:active, .rblx-jump-btn:active {
-            transform: scale(0.85);
-            background: rgba(255, 255, 255, 0.85);
-        }
-        #controls-right .rblx-jump-btn:active {
-            background: rgba(255, 204, 0, 1);
+        .roblox-jump-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.4);
         }
 
         /* SURPRISE BUTTON */
@@ -503,18 +501,16 @@
         <div class="hud-box" id="score-box">🧺 ANGKUT: 0 / 8 KAK BINTA</div>
     </div>
 
-    <div id="instruction">📐 KONTROLER KIRI & KANAN: Susunan Segitiga (Geser & Lompat)</div>
+    <div id="instruction">🕹️ GESER/USAP ANALOG KIRI (Kiri/Kanan) | TEKAN TOMBOL KANAN (Lompat)</div>
 
-    <!-- KONTROLER SEGITIGA DI KIRI & KANAN -->
-    <div id="controls-left">
-        <div class="rblx-arrow-btn btn-left-action">◄</div>
-        <div class="rblx-arrow-btn btn-right-action">►</div>
-        <div class="rblx-jump-btn btn-jump-action">🦘</div>
+    <!-- KONTROLER GAYA ROBLOX (ANALOG JOYSTICK KIRI & TOMBOL JUMP KANAN) -->
+    <div id="controls-joystick-area">
+        <div class="roblox-joystick-base" id="joystick-base">
+            <div class="roblox-joystick-thumb" id="joystick-thumb"></div>
+        </div>
     </div>
-    <div id="controls-right">
-        <div class="rblx-arrow-btn btn-left-action">◄</div>
-        <div class="rblx-arrow-btn btn-right-action">►</div>
-        <div class="rblx-jump-btn btn-jump-action">🦘</div>
+    <div id="controls-action">
+        <div class="roblox-jump-btn" id="btn-jump">⬆</div>
     </div>
 
     <button id="surprise-btn" onclick="triggerSurprise()">🎁 CLICK FOR THE SURPRISE! 🎁</button>
@@ -875,7 +871,7 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
 
         scene.add(endGoalGroup);
 
-        // Control logic
+        // Control logic & Virtual Analog Joystick (Roblox Style Swipe/Drag)
         let currentLaneIndex = 1;
         let targetX = lanes[currentLaneIndex];
         let speed = 0.58; 
@@ -914,15 +910,63 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
             if (bgm && bgm.paused && !isFinished) bgm.play().catch(() => {});
         }
 
+        // Setup Virtual Analog Joystick Touch Handling (Roblox Style Drag & Swipe)
+        const joystickArea = document.getElementById('controls-joystick-area');
+        const joystickThumb = document.getElementById('joystick-thumb');
+        let joystickTouchId = null;
+        let startX = 0;
+        let lastLaneSwitchX = 0;
+        const maxRadius = 45; // Batas maksimal visual analog bergerak dari tengah
+
+        joystickArea.addEventListener('touchstart', (e) => {
+            if (joystickTouchId !== null) return;
+            const touch = e.changedTouches[0];
+            joystickTouchId = touch.identifier;
+            
+            // Rekam titik awal sentuhan di tengah area joystick
+            const rect = joystickArea.getBoundingClientRect();
+            startX = touch.clientX;
+            lastLaneSwitchX = touch.clientX;
+        }, { passive: true });
+
+        joystickArea.addEventListener('touchmove', (e) => {
+            if (joystickTouchId === null) return;
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const touch = e.changedTouches[i];
+                if (touch.identifier === joystickTouchId) {
+                    const deltaX = touch.clientX - startX;
+                    
+                    // Batasi gerakan visual thumb agar tetap berada di dalam lingkaran base
+                    const clampedX = Math.max(-maxRadius, Math.min(maxRadius, deltaX));
+                    joystickThumb.style.transform = `translate(calc(-50% + ${clampedX}px), -50%)`;
+
+                    // Deteksi geseran (swipe) ke kiri atau ke kanan ala Roblox untuk pindah jalur
+                    if (touch.clientX - lastLaneSwitchX > 32) {
+                        moveRight();
+                        lastLaneSwitchX = touch.clientX;
+                    } else if (lastLaneSwitchX - touch.clientX > 32) {
+                        moveLeft();
+                        lastLaneSwitchX = touch.clientX;
+                    }
+                }
+            }
+        }, { passive: true });
+
+        function resetJoystick() {
+            joystickTouchId = null;
+            joystickThumb.style.transform = `translate(-50%, -50%)`;
+        }
+
+        joystickArea.addEventListener('touchend', resetJoystick);
+        joystickArea.addEventListener('touchcancel', resetJoystick);
+
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
             if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') performJump();
         });
 
-        document.querySelectorAll('.btn-left-action').forEach(el => { el.addEventListener('click', moveLeft); });
-        document.querySelectorAll('.btn-right-action').forEach(el => { el.addEventListener('click', moveRight); });
-        document.querySelectorAll('.btn-jump-action').forEach(el => { el.addEventListener('click', performJump); });
+        document.getElementById('btn-jump').addEventListener('click', performJump);
 
         // Loop Game
         function animate() {
@@ -998,8 +1042,8 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
                         isFinished = true;
                         document.getElementById('surprise-btn').style.display = 'block';
                         document.getElementById('instruction').style.display = 'none';
-                        document.getElementById('controls-left').style.display = 'none';
-                        document.getElementById('controls-right').style.display = 'none';
+                        document.getElementById('controls-joystick-area').style.display = 'none';
+                        document.getElementById('controls-action').style.display = 'none';
                     }
                 }
             }
@@ -1146,8 +1190,8 @@ Karna gak ada yang sempurna di dunia ini, same goes to perjalanan magangku ini. 
                 pElem.style.display = 'block';
                 pElem.innerHTML = `<b style="color:#fffa65; font-size:16px; text-align:center;">
                     Terima kasih telah mewarnai masa magang kami di Bank Indonesia! ✨<br><br>
-                    Sukses, Sehat, dan Bahagia Selalu Untuk Kak Binta! 💖 #SALAMMMBOOYAHH
-                    NANTI KITA LANJUTIN KOPDES KITA BIAR SEGERA DIANGKAT JADI #KOMISARISS (JANGANN LUPAIN KITAA YA KAKK)
+                    Sukses, Sehat, dan Bahagia Selalu Untuk Kak Binta! 💖#SALAAMMMBOOYAHHH
+                    AYO KITA LANJUTKAN MEGAPROYEK KITA (KOPDESS) DAN MABAR LAGIII
                 </b>`;
                 pElem.classList.add('show');
 
